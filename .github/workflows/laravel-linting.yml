@@ -1,0 +1,31 @@
+name: Laravel Code Linting
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer, phpstan, pint
+
+      - name: Install Dependencies
+        run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+
+      - name: Jalankan PHPStan (Static Analysis)
+        run: vendor/bin/phpstan analyse --level=5 app/
+
+      - name: Jalankan Laravel Pint (Code Formatting)
+        run: vendor/bin/pint --test
